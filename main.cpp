@@ -72,7 +72,72 @@ public:
 
     // Subtraction assignment operator (x -= y)
     BigInt& operator-=(const BigInt& other) {
-        // TODO: Implement this operator
+        if (isNegative == false && other.isNegative == true) {
+            BigInt temp = other;
+            temp.isNegative = false;
+
+            *this += temp;
+            return *this;
+        }
+        if (isNegative == true && other.isNegative == false) {
+
+            BigInt temp = other;
+            temp.isNegative = true;
+
+            *this += temp;
+            return *this
+        }
+        int cmp = compareMagnitude(other);
+        if (cmp == 0) {
+            number = "0";
+            isNegative = false;
+            return *this;
+        }
+        string result = "";
+        if (cmp > 0) {
+            // |this| > |other|
+            int i = number.length() - 1;
+            int j = other.number.length() - 1;
+            int borrow = 0;
+            while (i >= 0) {
+                int digit1 = number[i] - '0' - borrow;
+                int digit2 = (j >= 0) ? other.number[j] - '0' : 0;
+                if (digit1 < digit2) {
+                    digit1 += 10;
+                    borrow = 1;
+                }
+                else {
+                    borrow = 0;
+                }
+                result += char('0' + (digit1 - digit2));
+                i--;
+                j--;
+            }
+        }
+		else {
+			// |other| > |this|
+			int i = other.number.length() - 1;
+			int j = number.length() - 1;
+			int borrow = 0;
+			while (i >= 0) {
+				int digit1 = other.number[i] - '0' - borrow;
+				int digit2 = (j >= 0) ? number[j] - '0' : 0;
+				if (digit1 < digit2) {
+					digit1 += 10;
+					borrow = 1;
+				}
+				else {
+					borrow = 0;
+				}
+				result += char('0' + (digit1 - digit2));
+				i--;
+				j--;
+			}
+			isNegative = !isNegative; // Result takes the sign of the larger magnitude
+		}
+        reverse(result.begin(), result.end());
+        number = result;
+        removeLeadingZeros();
         return *this;
     }
 
@@ -96,27 +161,27 @@ public:
 
     // Pre-increment operator (++x)
     BigInt& operator++() {
-        // TODO: Implement this operator
+      *this += BigInt(1);
         return *this;
     }
 
     // Post-increment operator (x++)
     BigInt operator++(int) {
-        BigInt temp;
-        // TODO: Implement this operator
+        BigInt temp=*this;
+        ++(*this);
         return temp;
     }
 
     // Pre-decrement operator (--x)
     BigInt& operator--() {
-        // TODO: Implement this operator
+      *this -= BigInt(1);
         return *this;
     }
 
     // Post-decrement operator (x--)
     BigInt operator--(int) {
-        BigInt temp;
-        // TODO: Implement this operator
+        BigInt temp=*this;
+        --(*this);
         return temp;
     }
 
