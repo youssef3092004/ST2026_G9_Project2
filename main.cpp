@@ -1,5 +1,6 @@
 #include <iostream>
 #include <string>
+#include <algorithm>
 using namespace std;
 
 class BigInt {
@@ -52,21 +53,65 @@ public:
 
     // Unary negation operator (-x)
     BigInt operator-() const {
-        BigInt result;
-        // TODO: Implement negation logic
+        BigInt result = *this;
+        if (result.number != "0") {
+            result.isNegative = !result.isNegative;
+        }
         return result;
     }
 
     // Unary plus operator (+x)
     BigInt operator+() const {
-        BigInt result;
-        // TODO: Implement this operator
-        return result;
+        
+        return *this;
     }
 
     // Addition assignment operator (x += y)
     BigInt& operator+=(const BigInt& other) {
-        // TODO: Implement this operator
+        if (isNegative == other.isNegative) {
+            string result;
+            int i = (int)number.size() - 1;
+            int j = (int)other.number.size() - 1;
+            int carry = 0;
+            while (i >= 0 || j >= 0 || carry) {
+                int digitA = (i >= 0) ? (number[i] - '0') : 0;
+                int digitB = (j >= 0) ? (other.number[j] - '0') : 0;
+                int sum = digitA + digitB + carry;
+                carry = sum / 10;
+                result.push_back(char('0' + (sum % 10)));
+                i--; j--;
+            }
+            reverse(result.begin(), result.end());
+            number = result;
+        }
+        else {
+            int cmp = compareMagnitude(other);
+            if (cmp == 0) {
+                number = "0";
+                isNegative = false;
+            }
+            else {
+                const string& larger = (cmp > 0) ? number : other.number;
+                const string& smaller = (cmp > 0) ? other.number : number;
+                string result;
+                int i = (int)larger.size() - 1;
+                int j = (int)smaller.size() - 1;
+                int borrow = 0;
+                while (i >= 0) {
+                    int digitA = larger[i] - '0';
+                    int digitB = (j >= 0) ? (smaller[j] - '0') : 0;
+                    int diff = digitA - digitB - borrow;
+                    if (diff < 0) { diff += 10; borrow = 1; }
+                    else { borrow = 0; }
+                    result.push_back(char('0' + diff));
+                    i--; j--;
+                }
+                reverse(result.begin(), result.end());
+                number = result;
+                if (cmp < 0) isNegative = other.isNegative;
+            }
+        }
+        removeLeadingZeros();
         return *this;
     }
 
@@ -85,7 +130,7 @@ public:
             temp.isNegative = true;
 
             *this += temp;
-            return *this
+            return *this;
         }
         int cmp = compareMagnitude(other);
         if (cmp == 0) {
@@ -210,9 +255,8 @@ public:
 
 // Binary addition operator (x + y)
 BigInt operator+(BigInt lhs, const BigInt& rhs) {
-    BigInt result;
-    // TODO: Implement this operator
-    return result;
+    lhs += rhs;
+    return lhs;
 }
 
 // Binary subtraction operator (x - y)
