@@ -9,45 +9,70 @@ class BigInt {
 
     // Remove unnecessary leading zeros from the number string
     void removeLeadingZeros() {
-        // TODO: Implement this function
+        while (number.length() > 1 && number[0] == '0') {
+            number.erase(0, 1);
+        }
     }
 
     // Compare absolute values of two BigInts (ignore signs)
     // Returns: 1 if |this| > |other|, 0 if equal, -1 if |this| < |other|
     int compareMagnitude(const BigInt& other) const {
-        // TODO: Implement this function
+        if (number.length() > other.number.length()) return 1;
+        if (number > other.number) return 1;
+        if (number.length() == other.number.length()) return 0;
+        if (number.length() < other.number.length()) return -1;
+        if (number < other.number) return -1;
         return 0;
     }
 
 public:
     // Default constructor - initialize to zero
     BigInt() {
-        // TODO: Implement this constructor
+        number = "0";
+        isNegative = false;
     }
 
     // Constructor from 64-bit integer
     BigInt(int64_t value) {
-        // TODO: Implement this constructor
+        if (value < 0) {
+            isNegative = true;
+            value = -value;
+            number = to_string(value);
+        } else {
+            isNegative = false;
+            number = to_string(value);
+        }
+        removeLeadingZeros();
     }
 
     // Constructor from string representation
     BigInt(const string& str) {
-        // TODO: Implement this constructor
+        if (str[0] == '-') {
+            isNegative = true;
+            number = str.substr(1);
+        }
+        else {
+            isNegative = false;
+            number = str;   
+        }
     }
 
     // Copy constructor
     BigInt(const BigInt& other) {
-        // TODO: Implement this constructor
+        number = other.number;
+        isNegative = other.isNegative;
     }
 
     // Destructor
     ~BigInt() {
-        // TODO: Implement if needed
     }
 
     // Assignment operator
     BigInt& operator=(const BigInt& other) {
-        // TODO: Implement this operator
+        if (this != &other) {
+            number = other.number;
+            isNegative = other.isNegative;
+        }
         return *this;
     }
 
