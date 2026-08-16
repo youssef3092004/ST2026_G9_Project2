@@ -214,7 +214,6 @@ public:
 
     // Multiplication assignment operator (x *= y)
     BigInt& operator*=(const BigInt& other) {
-        // TODO: Implement this operator
         if (number == "0" || other.number == "0") {
             number = "0";
             isNegative = false;
@@ -230,17 +229,14 @@ public:
 
         for (int i = n - 1; i >= 0; i--) {
             int carry = 0;
-
             for (int j = m - 1; j >= 0; j--) {
                 int pos = i + j + 1;
-
-                int product = (number[i] - '0') * (other.number[j] - '0')
-                    + (result[pos] - '0') + carry;
+                int product = (number[i] - '0') * (other.number[j] - '0') 
+                            + (result[pos] - '0') + carry;
 
                 result[pos] = char('0' + (product % 10));
                 carry = product / 10;
             }
-
             result[i] += carry;
         }
 
@@ -249,7 +245,7 @@ public:
         removeLeadingZeros();
 
         return *this;
-    }
+	}
 
     // Division assignment operator (x /= y)
     BigInt& operator/=(const BigInt& other) {
@@ -407,8 +403,6 @@ BigInt operator-(BigInt lhs, const BigInt& rhs) {
 
 // Binary multiplication operator (x * y)
 BigInt operator*(BigInt lhs, const BigInt& rhs) {
-    BigInt result;
-    // TODO: Implement this operator
     lhs *= rhs;
     return lhs;
 }
