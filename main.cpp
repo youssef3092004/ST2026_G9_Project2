@@ -2,7 +2,22 @@
 #include <string>
 #include <algorithm>
 #include <stdexcept>
+#include <cstdint>
 using namespace std;
+
+class BigInt;
+
+BigInt operator+(BigInt lhs, const BigInt& rhs);
+BigInt operator-(BigInt lhs, const BigInt& rhs);
+BigInt operator*(BigInt lhs, const BigInt& rhs);
+BigInt operator/(BigInt lhs, const BigInt& rhs);
+BigInt operator%(BigInt lhs, const BigInt& rhs);
+bool operator==(const BigInt& lhs, const BigInt& rhs);
+bool operator!=(const BigInt& lhs, const BigInt& rhs);
+bool operator<(const BigInt& lhs, const BigInt& rhs);
+bool operator<=(const BigInt& lhs, const BigInt& rhs);
+bool operator>(const BigInt& lhs, const BigInt& rhs);
+bool operator>=(const BigInt& lhs, const BigInt& rhs);
 
 class BigInt {
     string number;    // Stores the number as a string
@@ -13,16 +28,17 @@ class BigInt {
         while (number.length() > 1 && number[0] == '0') {
             number.erase(0, 1);
         }
+        if (number.empty()) number = "0";
+        if (number == "0") isNegative = false;
     }
 
     // Compare absolute values of two BigInts (ignore signs)
     // Returns: 1 if |this| > |other|, 0 if equal, -1 if |this| < |other|
     int compareMagnitude(const BigInt& other) const {
-        if (number.length() > other.number.length()) return 1;
-        if (number > other.number) return 1;
-        if (number.length() == other.number.length()) return 0;
-        if (number.length() < other.number.length()) return -1;
-        if (number < other.number) return -1;
+        if (number.length() != other.number.length())
+            return number.length() > other.number.length() ? 1 : -1;
+        if (number != other.number)
+            return number > other.number ? 1 : -1;
         return 0;
     }
 
@@ -34,7 +50,7 @@ public:
     }
 
     // Constructor from 64-bit integer
-    BigInt(int64_t value) {
+    BigInt(int64_t value ) {
         if (value < 0) {
             isNegative = true;
             value = -value;
@@ -57,6 +73,7 @@ public:
             isNegative = false;
             number = str;
         }
+        removeLeadingZeros();
     }
 
     // Copy constructor
@@ -432,7 +449,7 @@ BigInt operator%(BigInt lhs, const BigInt& rhs) {
 // Equality comparison operator (x == y)
 bool operator==(const BigInt& lhs, const BigInt& rhs) {
     // TODO: Implement this operator
-	if (lhs.isNegative != rhs.isNegative) 
+	if (lhs.isNegative != rhs.isNegative)
         return false;
     return lhs.number == rhs.number;
 }
@@ -451,7 +468,7 @@ bool operator<(const BigInt& lhs, const BigInt& rhs) {
     if (!lhs.isNegative && rhs.isNegative)
         return false;
 
-     int magComp = compareMagnitude(lhs, rhs);
+     int magComp = lhs.compareMagnitude(rhs);
     if (!lhs.isNegative) {
         return magComp == -1;
 
@@ -486,7 +503,6 @@ int main() {
     cout << "Your task is to implement ALL the functions above." << endl;
     cout << "The tests below will work once you implement them correctly." << endl << endl;
 
-    /*
     // Test 1: Constructors and basic output
     cout << "1. Constructors and output:" << endl;
     BigInt a(12345);              // Should create BigInt from integer
@@ -542,7 +558,6 @@ int main() {
     cout << "Negative multiplication: " << BigInt(-5) * BigInt(3) << endl;  // Should be "-15"
     cout << "Negative division: " << BigInt(-10) / BigInt(3) << endl;       // Should be "-3"
     cout << "Negative modulus: " << BigInt(-10) % BigInt(3) << endl;        // Should be "-1"
-    */
 
     return 0;
 }
